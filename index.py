@@ -24,7 +24,7 @@ def runTests():
     desiredEffects = [ "Water Walking", "Fortify Speed" ]
     possibleRecipes = determineRecipe(desiredEffects)
 
-    print(f"The following recipes will give you [{" & ".join(desiredEffects)}]:")
+    print(f"There are {len(possibleRecipes)} recipes that will give you [{" & ".join(desiredEffects)}]:")
     [print(f" - {recipe}") for recipe in possibleRecipes]
 
 def getEffectsForIngredient(ingredient):
