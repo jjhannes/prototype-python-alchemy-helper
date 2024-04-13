@@ -14,6 +14,12 @@ def runTests():
 
     print(f"{waterBreathing} comes from {waterBreathingIngredients}")
 
+    # Test get common effects
+    scalesAndKwamaCuttle = [ "Scales", "Kwama Cuttle" ]
+    commonEffects = getCommonEffects(scalesAndKwamaCuttle)
+
+    print(f"[{" & ".join(scalesAndKwamaCuttle)}] has [{" & ".join(commonEffects)}] in common")
+
 def getEffectsForIngredient(ingredient):
     return data[ingredient]
 
@@ -27,6 +33,24 @@ def getIngredientsWithEffects(effects):
             ingredients.append(ingredient)      
 
     return ingredients
+
+def getCommonEffects(ingredients):
+    commonEffects = set()
+
+    for primary in range(len(ingredients)):
+        primaryIngredient = ingredients[primary]
+        primaryIngredientEffects = getEffectsForIngredient(primaryIngredient)
+
+        for secondary in range(primary + 1, len(ingredients)):
+            secondaryIngredient = ingredients[secondary]
+            secondaryIngredientEffects = getEffectsForIngredient(secondaryIngredient)
+
+            commonEffects.update(list(set(primaryIngredientEffects).intersection(secondaryIngredientEffects)))
+            
+            # Alternative approach
+            # commonEffects.update([element for element in primaryIngredientEffects if element in secondaryIngredientEffects])
+
+    return list(commonEffects)
 
 def main():
     runTests()
