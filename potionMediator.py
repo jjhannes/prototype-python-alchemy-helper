@@ -34,9 +34,15 @@ def getCommonEffects(ingredients):
 
     return list(commonEffects)
 
-def determineRecipe(desiredEffects):
+def determineRecipe(desiredEffects, excludedIngredients = []):
+    if (excludedIngredients is None):
+        excludedIngredients = []
+
     possibleRecipes = []
     ingredientsWithDesiredEffects = getIngredientsWithEffects(desiredEffects)
+
+    if (excludedIngredients is not None and len(excludedIngredients) > 0):
+        ingredientsWithDesiredEffects = [iwde for iwde in ingredientsWithDesiredEffects if iwde not in excludedIngredients]
 
     # Two ingredients
     for primary in range(len(ingredientsWithDesiredEffects)):
