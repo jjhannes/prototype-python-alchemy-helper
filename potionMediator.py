@@ -20,10 +20,10 @@ def isBadEffect(effect):
 
 def compileRecipe(ingredients, effects):
     return {
-        "ingredients": ingredients,
-        "effects": effects,
-        "goodEffects": [effect for effect in effects if not isBadEffect(effect)],
-        "badEffects": [effect for effect in effects if isBadEffect(effect)]
+        "ingredients": sorted(ingredients),
+        "effects": sorted(effects),
+        "goodEffects": sorted([effect for effect in effects if not isBadEffect(effect)]),
+        "badEffects": sorted([effect for effect in effects if isBadEffect(effect)])
     }
 
 def getEffectsForIngredient(ingredient):
@@ -131,5 +131,7 @@ def determineRecipe(desiredEffects, excludedIngredients = [], excludeBadPotions 
 
         if countBeforeFilter != len(possibleRecipes):
             print(f"{countBeforeFilter - len(possibleRecipes)} of {countBeforeFilter} recipies with additional good effects filtered out.")
+
+    possibleRecipes = sorted(possibleRecipes, key = lambda recipe: (len(recipe["badEffects"]), len(recipe["ingredients"]), -len(recipe["goodEffects"])), reverse = False)
 
     return possibleRecipes
