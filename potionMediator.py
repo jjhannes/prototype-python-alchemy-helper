@@ -41,8 +41,13 @@ def determineRecipe(desiredEffects, excludedIngredients = []):
     possibleRecipes = []
     ingredientsWithDesiredEffects = getIngredientsWithEffects(desiredEffects)
 
-    if (excludedIngredients is not None and len(excludedIngredients) > 0):
+    if excludedIngredients is not None and len(excludedIngredients) > 0:
+        countBeforeFilter = len(ingredientsWithDesiredEffects)
+
         ingredientsWithDesiredEffects = [iwde for iwde in ingredientsWithDesiredEffects if iwde not in excludedIngredients]
+
+        if countBeforeFilter != len(ingredientsWithDesiredEffects):
+            print(f"{countBeforeFilter - len(ingredientsWithDesiredEffects)} of {countBeforeFilter} unavailable ingredients filtered out.")
 
     # Two ingredients
     for primary in range(len(ingredientsWithDesiredEffects)):
