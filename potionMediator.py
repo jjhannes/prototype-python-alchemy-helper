@@ -58,7 +58,7 @@ def getCommonEffects(ingredients):
 
     return list(commonEffects)
 
-def determineRecipe(desiredEffects, excludedIngredients = [], excludeBadPotions = False):
+def determineRecipe(desiredEffects, excludedIngredients = [], excludeBadPotions = False, exactlyMatchDesiredEffects = False):
     if (excludedIngredients is None):
         excludedIngredients = []
 
@@ -123,5 +123,13 @@ def determineRecipe(desiredEffects, excludedIngredients = [], excludeBadPotions 
 
         if countBeforeFilter != len(possibleRecipes):
             print(f"{countBeforeFilter - len(possibleRecipes)} of {countBeforeFilter} recipies with bad effects filtered out.")
+
+    if exactlyMatchDesiredEffects:
+        countBeforeFilter = len(possibleRecipes)
+
+        possibleRecipes = [recipe for recipe in possibleRecipes if set(recipe["effects"]) == set(desiredEffects)]
+
+        if countBeforeFilter != len(possibleRecipes):
+            print(f"{countBeforeFilter - len(possibleRecipes)} of {countBeforeFilter} recipies with additional good effects filtered out.")
 
     return possibleRecipes

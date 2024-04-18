@@ -7,7 +7,8 @@ from potionMediator import determineRecipe
 parameterNames = {
     "desiredEffects": "de",
     "excludedIngredients": "ei",
-    "excludeBadPotions": "ebp"
+    "excludeBadPotions": "ebp",
+    "exactlyMatchDesiredEffects": "emde"
 }
 
 def configurePotionsController(app: FastAPI):
@@ -31,6 +32,7 @@ def determineRecipesWithDesiredEffects(request):
     desiredEffects = []
     excludedIngredients = []
     excludeBadPotions = False
+    exactlyMatchDesiredEffects = False
 
     if len(rawDesiredEffects) == 1:
         # Query string format: de=A,B,C
@@ -63,7 +65,18 @@ def determineRecipesWithDesiredEffects(request):
             rawExcludeBadPotions.lower() == "1"
         )
 
-    viablePotions = determineRecipe(desiredEffects, excludedIngredients, excludeBadPotions)
+    if parameterNames["exactlyMatchDesiredEffects"] in parameters:
+        rawExactlyMatchDesiredEffects = parameters[parameterNames["exactlyMatchDesiredEffects"]]
+
+        if len(rawExactlyMatchDesiredEffects) > 0:
+            rawExactlyMatchDesiredEffects = rawExactlyMatchDesiredEffects[0]
+    
+        exactlyMatchDesiredEffects = (
+            rawExactlyMatchDesiredEffects.lower() == "true" or
+            rawExactlyMatchDesiredEffects.lower() == "1"
+        )
+
+    viablePotions = determineRecipe(desiredEffects, excludedIngredients, excludeBadPotions, exactlyMatchDesiredEffects)
     collectionResponse = createCollectionResponse(viablePotions)
 
     return JSONResponse(collectionResponse, 200)
