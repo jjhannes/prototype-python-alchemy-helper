@@ -1,6 +1,30 @@
 
 from ingredientEffects import data
 
+def isBadEffect(effect):
+    effect = effect.lower()
+
+    if "cure" in effect or "resist" in effect:
+        return False
+    
+    return (
+        "burden" in effect or
+        "poison" in effect or
+        "blind" in effect or
+        "damage" in effect or
+        "drain" in effect or
+        "paralyz" in effect or
+        "weakness" in effect or
+        "vampirism" in effect
+    )
+
+def compileRecipe(ingredients, effects):
+    return {
+        "ingredients": ingredients,
+        "effects": effects,
+        "goodEffects": [effect for effect in effects if not isBadEffect(effect)],
+        "badEffects": [effect for effect in effects if isBadEffect(effect)]
+    }
 
 def getEffectsForIngredient(ingredient):
     return data[ingredient]
@@ -34,7 +58,7 @@ def getCommonEffects(ingredients):
 
     return list(commonEffects)
 
-def determineRecipe(desiredEffects, excludedIngredients = []):
+def determineRecipe(desiredEffects, excludedIngredients = [], excludeBadPotions = False):
     if (excludedIngredients is None):
         excludedIngredients = []
 
@@ -58,7 +82,7 @@ def determineRecipe(desiredEffects, excludedIngredients = []):
             commonEffects = getCommonEffects([ primaryIngredient, secondaryIngredient ])
 
             if (all(item in commonEffects for item in desiredEffects)):
-                possibleRecipes.append([ primaryIngredient, secondaryIngredient ])
+                possibleRecipes.append(compileRecipe([ primaryIngredient, secondaryIngredient ], commonEffects))
 
     # Three ingredients
     for primary in range(len(ingredientsWithDesiredEffects)):
@@ -72,7 +96,7 @@ def determineRecipe(desiredEffects, excludedIngredients = []):
                 commonEffects = getCommonEffects([ primaryIngredient, secondaryIngredient, tertiaryIngredient ])
 
                 if (all(item in commonEffects for item in desiredEffects)):
-                    possibleRecipes.append([ primaryIngredient, secondaryIngredient, tertiaryIngredient ])
+                    possibleRecipes.append(compileRecipe([ primaryIngredient, secondaryIngredient, tertiaryIngredient ], commonEffects))
 
     # Four ingredients
     for primary in range(len(ingredientsWithDesiredEffects)):
@@ -89,6 +113,10 @@ def determineRecipe(desiredEffects, excludedIngredients = []):
                     commonEffects = getCommonEffects([ primaryIngredient, secondaryIngredient, tertiaryIngredient, quaternaryIngredient ])
 
                     if (all(item in commonEffects for item in desiredEffects)):
-                        possibleRecipes.append([ primaryIngredient, secondaryIngredient, tertiaryIngredient, quaternaryIngredient ])
+                        # possibleRecipes.append([ primaryIngredient, secondaryIngredient, tertiaryIngredient, quaternaryIngredient ])
+                        possibleRecipes.append(compileRecipe([ primaryIngredient, secondaryIngredient, tertiaryIngredient, quaternaryIngredient ], commonEffects))
+
+    # if excludeBadPotions:
+    #     possibleRecipes = [recipe for recipe in possibleRecipes if len(recipe.badEffects) < 1]
 
     return possibleRecipes
