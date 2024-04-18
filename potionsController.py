@@ -6,7 +6,8 @@ from potionMediator import determineRecipe
 
 parameterNames = {
     "desiredEffects": "de",
-    "excludedIngredients": "ei"
+    "excludedIngredients": "ei",
+    "excludeBadPotions": "ebp"
 }
 
 def configurePotionsController(app: FastAPI):
@@ -29,6 +30,7 @@ def determineRecipesWithDesiredEffects(request):
     rawDesiredEffects = parameters[parameterNames["desiredEffects"]]
     desiredEffects = []
     excludedIngredients = []
+    excludeBadPotions = False
 
     if len(rawDesiredEffects) == 1:
         # Query string format: de=A,B,C
@@ -50,7 +52,18 @@ def determineRecipesWithDesiredEffects(request):
                 # Query string format: de=A&de=B&de=C
                 excludedIngredients = rawExcludedIngredients
 
-    viablePotions = determineRecipe(desiredEffects, excludedIngredients)
+    if parameterNames["excludeBadPotions"] in parameters:
+        rawExcludeBadPotions = parameters[parameterNames["excludeBadPotions"]]
+
+        if len(rawExcludeBadPotions) > 0:
+            rawExcludeBadPotions = rawExcludeBadPotions[0]
+
+        excludeBadPotions = (
+            rawExcludeBadPotions.lower() == "true" or
+            rawExcludeBadPotions.lower() == "1"
+        )
+
+    viablePotions = determineRecipe(desiredEffects, excludedIngredients, excludeBadPotions)
     collectionResponse = createCollectionResponse(viablePotions)
 
     return JSONResponse(collectionResponse, 200)

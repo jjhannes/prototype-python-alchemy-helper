@@ -116,7 +116,12 @@ def determineRecipe(desiredEffects, excludedIngredients = [], excludeBadPotions 
                         # possibleRecipes.append([ primaryIngredient, secondaryIngredient, tertiaryIngredient, quaternaryIngredient ])
                         possibleRecipes.append(compileRecipe([ primaryIngredient, secondaryIngredient, tertiaryIngredient, quaternaryIngredient ], commonEffects))
 
-    # if excludeBadPotions:
-    #     possibleRecipes = [recipe for recipe in possibleRecipes if len(recipe.badEffects) < 1]
+    if excludeBadPotions:
+        countBeforeFilter = len(possibleRecipes)
+
+        possibleRecipes = [recipe for recipe in possibleRecipes if len(recipe["badEffects"]) < 1]
+
+        if countBeforeFilter != len(possibleRecipes):
+            print(f"{countBeforeFilter - len(possibleRecipes)} of {countBeforeFilter} recipies with bad effects filtered out.")
 
     return possibleRecipes
