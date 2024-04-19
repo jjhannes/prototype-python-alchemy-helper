@@ -11,10 +11,11 @@ parameterNames = {
     "exactlyMatchDesiredEffects": "emde",
     "ingredients": "i"
 }
+apiBasePath = "/pyapi/v1"
 
 def configurePotionsController(app: FastAPI):
-    app.add_route("/pyapi/v1/potions/recipes/with-effects", handlePotionRecipesWithEffects, [ "GET" ])
-    app.add_route("/pyapi/v1/potions/from-ingredients", handlePotionFromIngredients, [ "GET" ])
+    app.add_route(f"{apiBasePath}/potions/recipes/with-effects", handlePotionRecipesWithEffects, [ "GET" ])
+    app.add_route(f"{apiBasePath}/potions/from-ingredients", handlePotionFromIngredients, [ "GET" ])
 
     return app;
 
