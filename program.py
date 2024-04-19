@@ -1,6 +1,6 @@
 
 from potionMediator import *
-from potionMediator import determineRecipe
+from potionMediator import getRecipesWithDesiredEffects
 
 def promptDesiredEffectsAndCalculateRecipe():
     promptDescription()
@@ -25,7 +25,7 @@ def promptDesiredEffectsAndCalculateRecipe():
         else:
             desiredEffects.append(effect)
 
-    possibleRecipes = determineRecipe(desiredEffects)
+    possibleRecipes = getRecipesWithDesiredEffects(desiredEffects)
 
     if (len(possibleRecipes) < 1):
         print(f"There are no recipes that will grant [{" & ".join(desiredEffects)}]")

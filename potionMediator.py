@@ -58,7 +58,7 @@ def getCommonEffects(ingredients):
 
     return list(commonEffects)
 
-def determineRecipe(desiredEffects, excludedIngredients = [], excludeBadPotions = False, exactlyMatchDesiredEffects = False):
+def getRecipesWithDesiredEffects(desiredEffects, excludedIngredients = [], excludeBadPotions = False, exactlyMatchDesiredEffects = False):
     if (excludedIngredients is None):
         excludedIngredients = []
 
@@ -135,3 +135,9 @@ def determineRecipe(desiredEffects, excludedIngredients = [], excludeBadPotions 
     possibleRecipes = sorted(possibleRecipes, key = lambda recipe: (len(recipe["badEffects"]), len(recipe["ingredients"]), -len(recipe["goodEffects"])), reverse = False)
 
     return possibleRecipes
+
+def getEffectsFromIngedients(ingredients):
+    effects = getCommonEffects(ingredients)
+    compiledRecipe = compileRecipe(ingredients, effects)
+
+    return compiledRecipe

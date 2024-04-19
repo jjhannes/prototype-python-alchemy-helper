@@ -22,7 +22,7 @@ def runTests():
 
     # Test determine recipe
     desiredEffects = [ "Water Walking", "Fortify Speed" ]
-    possibleRecipes = determineRecipe(desiredEffects)
+    possibleRecipes = getRecipesWithDesiredEffects(desiredEffects)
 
     print(f"There are {len(possibleRecipes)} recipes that will give you [{" & ".join(desiredEffects)}]:")
     [print(f" - {recipe}") for recipe in possibleRecipes]
