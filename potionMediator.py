@@ -136,7 +136,7 @@ def getRecipesWithDesiredEffects(desiredEffects, excludedIngredients = [], exclu
 
     return possibleRecipes
 
-def getEffectsFromIngedients(ingredients):
+def getRecipeFromIngedients(ingredients):
     effects = getCommonEffects(ingredients)
     compiledRecipe = compileRecipe(ingredients, effects)
 

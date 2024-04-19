@@ -2,7 +2,7 @@
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse, PlainTextResponse
 from urllib.parse import parse_qs
-from potionMediator import getRecipesWithDesiredEffects, getEffectsFromIngedients
+from potionMediator import getRecipesWithDesiredEffects, getRecipeFromIngedients
 
 parameterNames = {
     "desiredEffects": "de",
@@ -106,6 +106,6 @@ def handlePotionFromIngredients(request):
     elif len(ingredients) > 4:
         return PlainTextResponse(f"A maximum of 4 ingredients are allowed", status_code = 400)
     
-    resultingPotion = getEffectsFromIngedients(ingredients)
+    resultingPotion = getRecipeFromIngedients(ingredients)
     
     return JSONResponse(resultingPotion, 200)
