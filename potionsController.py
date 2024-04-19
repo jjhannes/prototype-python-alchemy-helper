@@ -2,7 +2,7 @@
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse, PlainTextResponse
 from urllib.parse import parse_qs
-from potionMediator import getRecipesWithDesiredEffects, getRecipeFromIngedients
+from potionMediator import getRecipesWithDesiredEffects, getRecipeFromIngedients, validateIngredients, validateEffects
 
 parameterNames = {
     "desiredEffects": "de",
@@ -44,6 +44,11 @@ def handlePotionRecipesWithEffects(request):
     else:
         # Query string format: de=A&de=B&de=C
         desiredEffects = rawDesiredEffects
+
+    invalidEffects = validateEffects(desiredEffects)
+
+    if len(invalidEffects) > 0:
+        return PlainTextResponse(f"Invalid desired effects provided: [{", ".join(invalidEffects)}]", status_code = 400) 
 
     if parameterNames["excludedIngredients"] in parameters:
         rawExcludedIngredients = parameters[parameterNames["excludedIngredients"]]
@@ -100,6 +105,11 @@ def handlePotionFromIngredients(request):
     else:
         # Query string format: de=A&de=B&de=C
         ingredients = rawIngredients
+
+    invalidIngredients = validateIngredients(ingredients)
+
+    if len(invalidIngredients) > 0:
+        return PlainTextResponse(f"Invalid ingredients provided: [{", ".join(invalidIngredients)}]", status_code = 400) 
 
     if len(ingredients) < 2:
         return PlainTextResponse(f"A minimum of 2 ingredients are required", status_code = 400)

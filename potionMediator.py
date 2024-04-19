@@ -18,6 +18,12 @@ def isBadEffect(effect):
         "vampirism" in effect
     )
 
+def isIngredient(ingredient):
+    return ingredient in data.keys()
+
+def isEffect(effect):
+    return effect in set([x for xs in data.values() for x in xs])
+
 def compileRecipe(ingredients, effects):
     return {
         "ingredients": sorted(ingredients),
@@ -57,6 +63,18 @@ def getCommonEffects(ingredients):
             # commonEffects.update([element for element in primaryIngredientEffects if element in secondaryIngredientEffects])
 
     return list(commonEffects)
+
+# Validates the given ingredients and returns a list of invalid ingredients.
+# That means, if the returned collection is empty, all the given ingredients are valid.
+# Conversely, if the list contains any elements, those ingredients are considered invalid.
+def validateIngredients(ingredients):
+    return [ingredient for ingredient in ingredients if not isIngredient(ingredient)]
+
+# Validates the given effects and returns a list of invalid effects.
+# That means, if the returned collection is empty, all the given effects are valid.
+# Conversely, if the list contains any elements, those effects are considered invalid.
+def validateEffects(effects):
+    return [effect for effect in effects if not isEffect(effect)]
 
 def getRecipesWithDesiredEffects(desiredEffects, excludedIngredients = [], excludeBadPotions = False, exactlyMatchDesiredEffects = False):
     if (excludedIngredients is None):
