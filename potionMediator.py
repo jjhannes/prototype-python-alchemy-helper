@@ -18,11 +18,11 @@ def isBadEffect(effect):
         "vampirism" in effect
     )
 
-def isIngredient(ingredient):
-    return ingredient in data.keys()
+def isIngredient(ingredient: str):
+    return ingredient.lower() in [key.lower() for key in data.keys()]
 
-def isEffect(effect):
-    return effect in set([x for xs in data.values() for x in xs])
+def isEffect(effect: str):
+    return effect.lower() in set([x.lower() for xs in data.values() for x in xs])
 
 def compileRecipe(ingredients, effects):
     return {
@@ -32,17 +32,20 @@ def compileRecipe(ingredients, effects):
         "badEffects": sorted([effect for effect in effects if isBadEffect(effect)])
     }
 
-def getEffectsForIngredient(ingredient):
-    return data[ingredient]
+def getEffectsForIngredient(ingredient:str) -> list[str]:
+    sourceIngredientKey = [key for key in data.keys() if key.lower() == ingredient.lower()][0]
+    
+    return data[sourceIngredientKey]
 
 def getIngredientsWithEffects(effects):
     ingredients = set()
 
     for ingredient in data:
-        ingredientEffects = data[ingredient]
+        # ingredientEffects = data[ingredient]
+        ingredientEffects = getEffectsForIngredient(ingredient)
 
         if any(check in ingredientEffects for check in effects):
-            ingredients.update([ ingredient ])      
+            ingredients.update([ ingredient ])
 
     return list(ingredients)
 
@@ -156,6 +159,7 @@ def getRecipesWithDesiredEffects(desiredEffects, excludedIngredients = [], exclu
 
 def getRecipeFromIngedients(ingredients):
     effects = getCommonEffects(ingredients)
-    compiledRecipe = compileRecipe(ingredients, effects)
+    sourceIngredients = [ingredient for ingredient in data.keys() if ingredient.lower() in ingredients]
+    compiledRecipe = compileRecipe(sourceIngredients, effects)
 
     return compiledRecipe
