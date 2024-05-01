@@ -1,7 +1,7 @@
 
 from ingredientEffects import data
 
-def isBadEffect(effect):
+def isBadEffect(effect: str) -> bool:
     effect = effect.lower()
 
     if "cure" in effect or "resist" in effect:
@@ -18,13 +18,13 @@ def isBadEffect(effect):
         "vampirism" in effect
     )
 
-def isIngredient(ingredient: str):
+def isIngredient(ingredient: str) -> bool:
     return ingredient.lower() in [key.lower() for key in data.keys()]
 
-def isEffect(effect: str):
+def isEffect(effect: str) -> bool:
     return effect.lower() in set([x.lower() for xs in data.values() for x in xs])
 
-def compileRecipe(ingredients, effects):
+def compileRecipe(ingredients: list[str], effects: list[str]) -> dict[str, list[str]]:
     return {
         "ingredients": sorted(ingredients),
         "effects": sorted(effects),
@@ -32,24 +32,24 @@ def compileRecipe(ingredients, effects):
         "badEffects": sorted([effect for effect in effects if isBadEffect(effect)])
     }
 
-def getEffectsForIngredient(ingredient:str) -> list[str]:
+def getEffectsForIngredient(ingredient: str) -> list[str]:
     sourceIngredientKey = [key for key in data.keys() if key.lower() == ingredient.lower()][0]
     
     return data[sourceIngredientKey]
 
-def getIngredientsWithEffects(effects):
+def getIngredientsWithEffects(effects: list[str]) -> list[str]:
     ingredients = set()
 
     for ingredient in data:
         # ingredientEffects = data[ingredient]
         ingredientEffects = getEffectsForIngredient(ingredient)
 
-        if any(check in ingredientEffects for check in effects):
+        if any([ iwe for iwe in ingredientEffects if iwe.lower() in [ e.lower() for e in effects ] ]):
             ingredients.update([ ingredient ])
 
     return list(ingredients)
 
-def getCommonEffects(ingredients):
+def getCommonEffects(ingredients: list[str]) -> list[str]:
     commonEffects = set()
 
     for primary in range(len(ingredients)):
@@ -70,16 +70,16 @@ def getCommonEffects(ingredients):
 # Validates the given ingredients and returns a list of invalid ingredients.
 # That means, if the returned collection is empty, all the given ingredients are valid.
 # Conversely, if the list contains any elements, those ingredients are considered invalid.
-def validateIngredients(ingredients):
+def validateIngredients(ingredients: list[str]) -> list[str]:
     return [ingredient for ingredient in ingredients if not isIngredient(ingredient)]
 
 # Validates the given effects and returns a list of invalid effects.
 # That means, if the returned collection is empty, all the given effects are valid.
 # Conversely, if the list contains any elements, those effects are considered invalid.
-def validateEffects(effects):
+def validateEffects(effects: list[str]) -> list[str]:
     return [effect for effect in effects if not isEffect(effect)]
 
-def getRecipesWithDesiredEffects(desiredEffects, excludedIngredients = [], excludeBadPotions = False, exactlyMatchDesiredEffects = False):
+def getRecipesWithDesiredEffects(desiredEffects: list[str], excludedIngredients: list[str] = [], excludeBadPotions: bool = False, exactlyMatchDesiredEffects: bool = False) -> list[dict[str, list[str]]]:
     if (excludedIngredients is None):
         excludedIngredients = []
 
@@ -89,8 +89,8 @@ def getRecipesWithDesiredEffects(desiredEffects, excludedIngredients = [], exclu
     if excludedIngredients is not None and len(excludedIngredients) > 0:
         countBeforeFilter = len(ingredientsWithDesiredEffects)
 
-        ingredientsWithDesiredEffects = [iwde for iwde in ingredientsWithDesiredEffects if iwde not in excludedIngredients]
-
+        ingredientsWithDesiredEffects = [iwde for iwde in ingredientsWithDesiredEffects if iwde.lower() not in [ei.lower() for ei in excludedIngredients]]
+        
         if countBeforeFilter != len(ingredientsWithDesiredEffects):
             print(f"{countBeforeFilter - len(ingredientsWithDesiredEffects)} of {countBeforeFilter} excluded ingredients filtered out.")
 
@@ -102,7 +102,7 @@ def getRecipesWithDesiredEffects(desiredEffects, excludedIngredients = [], exclu
             secondaryIngredient = ingredientsWithDesiredEffects[secondary]
             commonEffects = getCommonEffects([ primaryIngredient, secondaryIngredient ])
 
-            if (all(item in commonEffects for item in desiredEffects)):
+            if (all(desiredEffect in [ce.lower() for ce in commonEffects] for desiredEffect in [de.lower() for de in desiredEffects])):
                 possibleRecipes.append(compileRecipe([ primaryIngredient, secondaryIngredient ], commonEffects))
 
     # Three ingredients
@@ -116,7 +116,7 @@ def getRecipesWithDesiredEffects(desiredEffects, excludedIngredients = [], exclu
                 tertiaryIngredient = ingredientsWithDesiredEffects[tertiary]
                 commonEffects = getCommonEffects([ primaryIngredient, secondaryIngredient, tertiaryIngredient ])
 
-                if (all(item in commonEffects for item in desiredEffects)):
+                if (all(desiredEffect in [ce.lower() for ce in commonEffects] for desiredEffect in [de.lower() for de in desiredEffects])):
                     possibleRecipes.append(compileRecipe([ primaryIngredient, secondaryIngredient, tertiaryIngredient ], commonEffects))
 
     # Four ingredients
@@ -133,7 +133,7 @@ def getRecipesWithDesiredEffects(desiredEffects, excludedIngredients = [], exclu
                     quaternaryIngredient = ingredientsWithDesiredEffects[quaternary]
                     commonEffects = getCommonEffects([ primaryIngredient, secondaryIngredient, tertiaryIngredient, quaternaryIngredient ])
 
-                    if (all(item in commonEffects for item in desiredEffects)):
+                    if (all(desiredEffect in [ce.lower() for ce in commonEffects] for desiredEffect in [de.lower() for de in desiredEffects])):
                         # possibleRecipes.append([ primaryIngredient, secondaryIngredient, tertiaryIngredient, quaternaryIngredient ])
                         possibleRecipes.append(compileRecipe([ primaryIngredient, secondaryIngredient, tertiaryIngredient, quaternaryIngredient ], commonEffects))
 
@@ -148,7 +148,7 @@ def getRecipesWithDesiredEffects(desiredEffects, excludedIngredients = [], exclu
     if exactlyMatchDesiredEffects:
         countBeforeFilter = len(possibleRecipes)
 
-        possibleRecipes = [recipe for recipe in possibleRecipes if set(recipe["effects"]) == set(desiredEffects)]
+        possibleRecipes = [recipe for recipe in possibleRecipes if set([re.lower() for re in recipe["effects"]]) == set([de.lower() for de in desiredEffects])]
 
         if countBeforeFilter != len(possibleRecipes):
             print(f"{countBeforeFilter - len(possibleRecipes)} of {countBeforeFilter} recipies with additional good effects filtered out.")
@@ -157,7 +157,7 @@ def getRecipesWithDesiredEffects(desiredEffects, excludedIngredients = [], exclu
 
     return possibleRecipes
 
-def getRecipeFromIngedients(ingredients):
+def getRecipeFromIngedients(ingredients: list[str]) -> dict[str, list[str]]:
     effects = getCommonEffects(ingredients)
     sourceIngredients = [ingredient for ingredient in data.keys() if ingredient.lower() in ingredients]
     compiledRecipe = compileRecipe(sourceIngredients, effects)
