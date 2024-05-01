@@ -1,4 +1,5 @@
 
+import os
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse, PlainTextResponse
 from urllib.parse import parse_qs
@@ -14,6 +15,7 @@ parameterNames = {
 apiBasePath = "/pyapi/v1"
 
 def configurePotionsController(app: FastAPI):
+    app.add_route(f"/", lambda request: PlainTextResponse(f"PYAPI ${os.environ["ENV_PLATFORM"] if "ENV_PLATFORM" in os.environ else 'N/A'} RUNNING", 200), [ "GET" ])
     app.add_route(f"{apiBasePath}/potions/recipes/with-effects", handlePotionRecipesWithEffects, [ "GET" ])
     app.add_route(f"{apiBasePath}/potions/from-ingredients", handlePotionFromIngredients, [ "GET" ])
 

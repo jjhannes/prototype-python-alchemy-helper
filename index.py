@@ -1,16 +1,29 @@
 
+import sys
 from fastapi import FastAPI
 import uvicorn
 from weatherForecastsController import configureWeatherForecastController
 from potionsController import configurePotionsController
 
-port = 6668
+def createApp():
+    port = 6668
 
-app = FastAPI()
+    app = FastAPI()
 
-configureWeatherForecastController(app)
-configurePotionsController(app)
+    configureWeatherForecastController(app)
+    configurePotionsController(app)
+
+    return app, port
 
 if __name__ == "__main__":
-    uvicorn.run(app, port=port)
+    app, port = createApp()
+
+    uvicorn.run(app, port = port)
+    
+    # TODO: Proper uvicorn implementation and usage(https://www.uvicorn.org/#the-asgi-interface)
+    # ucConfig = uvicorn.Config("index:app", port = port, log_level = "info")
+    # ucServer = uvicorn.Server(ucConfig)
+    # ucServer.run()
+
+    
 
