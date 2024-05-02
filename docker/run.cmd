@@ -1,1 +1,1 @@
-docker run -e ENV_PLATFORM=PY_DOCKER -dp 127.0.0.1:16668:6668 prototype-python-alchemy-helper
+docker run -e ENV_PLATFORM=DOCKER -dp 16668:6668 prototype-python-alchemy-helper

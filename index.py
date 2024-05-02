@@ -18,7 +18,7 @@ def createApp():
 if __name__ == "__main__":
     app, port = createApp()
 
-    uvicorn.run(app, port = port)
+    uvicorn.run(app, host = "0.0.0.0", port = port)
     
     # TODO: Proper uvicorn implementation and usage(https://www.uvicorn.org/#the-asgi-interface)
     # ucConfig = uvicorn.Config("index:app", port = port, log_level = "info")
